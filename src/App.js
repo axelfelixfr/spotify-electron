@@ -1,23 +1,51 @@
-import logo from './logo.svg';
-import './App.css';
+import React, { useState } from 'react';
+import { auth, onAuthStateChanged, signOut } from './firebase/firebase-config';
+import { AuthPage } from './pages/auth/AuthPage';
 
 function App() {
+  const [user, setUser] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
+
+  onAuthStateChanged(auth, currentUser => {
+    if (!currentUser) {
+      setUser(null);
+    } else {
+      setUser(currentUser);
+    }
+
+    setIsLoading(false);
+  });
+
+  if (isLoading) {
+    return null;
+  }
+
+  return !user ? <AuthPage /> : <UserLogged />;
+}
+
+function UserLogged() {
+  const logout = () => {
+    signOut(auth)
+      .then(() => {
+        console.log('sign Out success');
+      })
+      .catch(error => {
+        console.log(error);
+      });
+  };
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div
+      style={{
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        flexDirection: 'column',
+        height: '100vh'
+      }}
+    >
+      <h1>Usuario logueado</h1>
+      <button onClick={logout}>Cerrar sesión</button>
     </div>
   );
 }

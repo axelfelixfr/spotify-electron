@@ -1,0 +1,38 @@
+@import '../../scss/index.scss';
+
+.auth {
+  min-height: 100vh;
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: cover;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  &__dark{
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    min-height: 100vh;
+    min-width: 100%;
+    background-color: $background-dark;
+    opacity: 0.75;
+    z-index: 0;
+  }
+
+  &__box {
+    position: relative;
+    text-align: center;
+    background-color: $background-grey-dark;
+    width: 500px;
+    z-index: 1;
+    padding: 20px 70px;
+    border-radius: 10px;
+
+    &-logo {
+      img {
+        width: 250px
+      }
+    }
+  }
+}
