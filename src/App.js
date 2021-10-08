@@ -1,26 +1,46 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { auth, onAuthStateChanged, signOut } from './firebase/firebase-config';
 import { AuthPage } from './pages/auth/AuthPage';
+import { ToastContainer } from 'react-toastify';
 
 function App() {
   const [user, setUser] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
 
-  onAuthStateChanged(auth, currentUser => {
-    if (!currentUser) {
-      setUser(null);
-    } else {
-      setUser(currentUser);
-    }
+  // Se coloca useEffect
+  useEffect(() => {
+    onAuthStateChanged(auth, currentUser => {
+      if (!currentUser) {
+        setUser(null);
+      } else {
+        setUser(currentUser);
+        console.log(currentUser);
+      }
 
-    setIsLoading(false);
-  });
+      setIsLoading(false);
+    });
+  }, []);
 
   if (isLoading) {
     return null;
   }
 
-  return !user ? <AuthPage /> : <UserLogged />;
+  return (
+    <>
+      {!user ? <AuthPage /> : <UserLogged />}
+      <ToastContainer
+        position="top-right"
+        autoClose={5000}
+        hideProgressBar={false}
+        newestOnTop
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+      />
+    </>
+  );
 }
 
 function UserLogged() {

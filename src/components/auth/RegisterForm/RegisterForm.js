@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Button, Form, Icon, Input } from 'semantic-ui-react';
+import { toast } from 'react-toastify';
 import './RegisterForm.scss';
 import { useForm } from './../../../hooks/useForm';
 import {
@@ -9,7 +10,8 @@ import {
 } from '../../../utils/validations';
 import {
   createUserWithEmailAndPassword,
-  auth
+  auth,
+  updateProfile
 } from '../../../firebase/firebase-config';
 
 export const RegisterForm = ({ setSelectedForm }) => {
@@ -57,26 +59,35 @@ export const RegisterForm = ({ setSelectedForm }) => {
     if (formIsCorrect) {
       setIsLoading(true);
 
-      console.log(email, password);
+      console.log(username, email, password);
 
+      // Crear usuario con Firebase
       createUserWithEmailAndPassword(auth, email, password)
         .then(() => {
           console.log('Registro completo');
+          changeUsername();
         })
         .catch(error => {
-          console.log('Error al crear la cuenta');
+          toast.error('Ha fallado el registro');
           console.log(error);
-        })
-        .finally(() => {
-          setIsLoading(false);
-          setSelectedForm(null);
         });
+      setIsLoading(false);
+      setSelectedForm(null);
     }
+  };
+
+  const changeUsername = () => {
+    const user = auth.currentUser;
+    updateProfile(user, { displayName: username }).catch(error => {
+      toast.error('Error al asignar el nombre de usuario');
+      console.log(error);
+    });
   };
 
   // Mostrar contraseña
   const [showPassword, setShowPassword] = useState(false);
 
+  // Handle para mostrar/ocultar contraseña
   const handleShowPassword = () => {
     setShowPassword(!showPassword);
   };
