@@ -11,7 +11,8 @@ import {
 import {
   createUserWithEmailAndPassword,
   auth,
-  updateProfile
+  updateProfile,
+  sendEmailVerification
 } from '../../../firebase/firebase-config';
 
 export const RegisterForm = ({ setSelectedForm }) => {
@@ -66,6 +67,7 @@ export const RegisterForm = ({ setSelectedForm }) => {
         .then(() => {
           console.log('Registro completo');
           changeUsername();
+          sendVerificationEmail();
         })
         .catch(error => {
           toast.error('Ha fallado el registro');
@@ -82,6 +84,18 @@ export const RegisterForm = ({ setSelectedForm }) => {
       toast.error('Error al asignar el nombre de usuario');
       console.log(error);
     });
+  };
+
+  const sendVerificationEmail = () => {
+    const user = auth.currentUser;
+    sendEmailVerification(user)
+      .then(() => {
+        toast.success('Se ha enviado un correo de verificación');
+      })
+      .catch(error => {
+        toast.error('Error al enviar el mensaje de verificación');
+        console.log(error);
+      });
   };
 
   // Mostrar contraseña
