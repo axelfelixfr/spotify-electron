@@ -33,6 +33,7 @@ export const LoginForm = ({ setSelectedForm }) => {
   // Para saber si hay un usuario
   const [user, setUser] = useState(null);
 
+  // Códigos de error de Firebase
   const handleErrorLogin = code => {
     switch (code) {
       case 'auth/user-not-found':
@@ -52,6 +53,7 @@ export const LoginForm = ({ setSelectedForm }) => {
     }
   };
 
+  // Envio del formulario
   const handleOnSubmit = e => {
     e.preventDefault();
     setFormError({});
@@ -74,7 +76,6 @@ export const LoginForm = ({ setSelectedForm }) => {
 
     // Si el formulario paso sin errores se ejecuta esto
     if (formIsCorrect) {
-      console.log('Todo chido');
       // Se hace el loading del boton
       setIsLoading(true);
       signInWithEmailAndPassword(auth, email, password)
@@ -91,13 +92,11 @@ export const LoginForm = ({ setSelectedForm }) => {
         .catch(error => {
           // Controlamos los errores de Firebase
           handleErrorLogin(error.code);
-        })
-        .finally(() => {
-          // Por último quitamos el loading y pasamos a null el formulario
-          setIsLoading(false);
         });
-      // Esto te regresa a las opciones:
-      // setSelectedForm("null");
+      // Por último quitamos el loading y pasamos a null el formulario
+      setIsLoading(false);
+      // Esto te regresa a las opciones
+      // setSelectedForm(null);
     }
   };
 

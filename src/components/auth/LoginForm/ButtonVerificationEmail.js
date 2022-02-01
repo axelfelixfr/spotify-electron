@@ -3,20 +3,27 @@ import { toast } from 'react-toastify';
 import { sendEmailVerification, auth } from '../../../firebase/firebase-config';
 
 export const ButtonVerificationEmail = ({ setIsLoading, setUserActive }) => {
+  // Función para enviar correo de verificación
   const resetEmailVerification = () => {
     const user = auth.currentUser;
+    // Mandamos el correo
     sendEmailVerification(user)
       .then(() => {
+        // Mostramos alerta
         toast.success('Se ha enviado el email de verificación');
       })
       .catch(error => {
+        // Si hay error, usamos el handleErrorVerification
         handleErrorVerification(error.code);
         console.log(error);
+      })
+      .finally(() => {
+        setIsLoading(false);
+        setUserActive(true);
       });
-    setIsLoading(false);
-    setUserActive(true);
   };
 
+  // Códigos de error de Firebase
   const handleErrorVerification = code => {
     switch (code) {
       case 'auth/wrong-password':

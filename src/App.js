@@ -9,29 +9,28 @@ function App() {
 
   // Se coloca useEffect
   useEffect(() => {
-    if (auth.currentUser) {
-      onAuthStateChanged(auth, currentUser => {
-        console.log(currentUser);
-        // Si existe un usuario pero su correo no ha sido verificado, entonces que lo saque de sesión
-        if (!currentUser?.emailVerified) {
-          // Hacemos el cierre de sesión
-          signOut(auth).catch(error => {
+    onAuthStateChanged(auth, currentUser => {
+      console.log(auth.currentUser);
+
+      // Si existe un usuario pero su correo no ha sido verificado, entonces que lo saque de sesión
+      if (!currentUser?.emailVerified) {
+        // Hacemos el cierre de sesión
+        signOut(auth)
+          .then(() => {
+            // Pasa a null el user
+            setUser(null);
+          })
+          .catch(error => {
             console.log(error);
           });
-          // Pasa a null el user
-          setUser(null);
-        } else {
-          // Si su correo ha sido verificado, entonces mandamos al usuario
-          setUser(currentUser);
-        }
+      } else {
+        // Si su correo ha sido verificado, entonces mandamos al usuario
+        setUser(currentUser);
+      }
 
-        setIsLoading(false);
-      });
-    } else {
-      setUser(null);
       setIsLoading(false);
-    }
-  }, []);
+    });
+  }, [setUser, setIsLoading]);
 
   if (isLoading) {
     return null;
