@@ -16,15 +16,15 @@ import {
 } from '../../../firebase/firebase-config';
 
 export const RegisterForm = ({ setSelectedForm }) => {
-  // State del formulario
+  // State del formulario de registro
   const initialForm = {
     username: '',
     email: '',
     password: ''
   };
 
+  // State del formulario
   const [formValues, handleInputChange] = useForm(initialForm);
-
   const { username, email, password } = formValues;
 
   // Errores del formulario
@@ -34,30 +34,38 @@ export const RegisterForm = ({ setSelectedForm }) => {
   const [isLoading, setIsLoading] = useState(false);
 
   const handleOnSubmit = e => {
+    // Prevenimos el evento
     e.preventDefault();
+    // Inicializamos el state de errores
     setFormError({});
+    // Las variables para validación
     let errors = {};
-
     let formIsCorrect = true;
 
+    // Si el email no es valido entonces pasara a false "formIsCorrect" y pasara la propiedad email en false
     if (!validateEmail(email)) {
       errors.email = true;
       formIsCorrect = false;
     }
 
+    // Si el password no es valido entonces pasara a false "formIsCorrect" y pasara la propiedad password en false
     if (!validatePassword(password)) {
       errors.password = true;
       formIsCorrect = false;
     }
 
+    // Si el username no es valido entonces pasara a false "formIsCorrect" y pasara la propiedad username en false
     if (!validateName(username)) {
       errors.username = true;
       formIsCorrect = false;
     }
 
+    // El objeto de errores se pasa al state
     setFormError(errors);
 
+    // Si el formulario paso sin errores se ejecuta esto
     if (formIsCorrect) {
+      // Se hace el loading del boton
       setIsLoading(true);
 
       console.log(username, email, password);
@@ -66,18 +74,23 @@ export const RegisterForm = ({ setSelectedForm }) => {
       createUserWithEmailAndPassword(auth, email, password)
         .then(() => {
           console.log('Registro completo');
+          // Cambiamos el username por el que puso en el formulario
           changeUsername();
+          // Enviamos el correo para verificar
           sendVerificationEmail();
         })
         .catch(error => {
           toast.error('Ha fallado el registro');
           console.log(error);
         });
+
+      // Por último quitamos el loading y pasamos a null el formulario
       setIsLoading(false);
       setSelectedForm(null);
     }
   };
 
+  // Función para cambiar el username
   const changeUsername = () => {
     const user = auth.currentUser;
     updateProfile(user, { displayName: username }).catch(error => {
@@ -86,6 +99,7 @@ export const RegisterForm = ({ setSelectedForm }) => {
     });
   };
 
+  // Enviamos el correo para verificar
   const sendVerificationEmail = () => {
     const user = auth.currentUser;
     sendEmailVerification(user)
